@@ -1,0 +1,15 @@
+{
+  "dependencies": {
+    "express": "^4.18.2"
+  },
+  "name": "sample-database",
+  "version": "1.0.0",
+  "main": "app.js",
+  "devDependencies": {},
+  "scripts": {
+    "dev": "nodemon app.js --watch"
+  },
+  "author": "",
+  "license": "ISC",
+  "description": ""
+}

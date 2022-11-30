@@ -6,9 +6,9 @@ const mysql = require("mysql2");
 // Connect to DB using environment variables.
 const con = mysql.createConnection({
   host: "localhost",
-  user: process.env.USER,
-  password: process.env.PASSWORD,
-  database: process.env.DATABASE,
+  user: process.env.USER || 'root',
+  password: process.env.PASSWORD || '',
+  database: process.env.DATABASE || 'sample_database',
 });
 
 /**

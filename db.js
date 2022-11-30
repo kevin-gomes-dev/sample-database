@@ -7,7 +7,7 @@
 const mysql = require("mysql2");
 
 // The 2 databases. Test for testing, prod for the actual data
-const PRODUCTION_DB = "sample_database",
+const PRODUCTION_DB = process.env.database || "sample_database",
   TEST_DB = "test_sample_database";
 
 // The two kinds of modes we can be in
@@ -29,8 +29,8 @@ const state = {
 exports.connect = function (mode, done) {
   state.pool = mysql.createPool({
     host: "localhost",
-    user: process.env.USER,
-    password: process.env.PASSWORD,
+    user: process.env.USER || 'root',
+    password: process.env.PASSWORD || '',
     database: mode === exports.MODE_PRODUCTION ? PRODUCTION_DB : TEST_DB,
   });
   state.mode = mode;

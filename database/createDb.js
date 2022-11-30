@@ -8,8 +8,12 @@ const con = mysql.createConnection({
   host: "localhost",
   user: process.env.USER,
   password: process.env.PASSWORD,
+  database: process.env.DATABASE,
 });
 
+/**
+ * A test function to create our database
+ */
 function createDatabase() {
   con.connect((err) => {
     if (err) throw err;
@@ -21,6 +25,9 @@ function createDatabase() {
   });
 }
 
+/**
+ * A test function to delete our database
+ */
 function deleteDatabase() {
   con.connect((err) => {
     if (err) throw err;
@@ -32,5 +39,19 @@ function deleteDatabase() {
   });
 }
 
-// Delete the database if it exists, then create one.
-// createDatabase();
+/**
+ * A test function to create a students table, clearly not going to stay
+ */
+function createStudents() {
+  con.connect((err) => {
+    if (err) throw err;
+    console.log(`Connected to MySQL with host: ${con.config.host}`);
+    con.query(
+      `CREATE TABLE students(ID INT PRIMARY KEY, fname varchar(255))`,
+      (err) => {
+        if (err) throw err;
+        console.log("Done creating table");
+      }
+    );
+  });
+}

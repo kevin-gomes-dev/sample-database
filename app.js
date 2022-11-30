@@ -1,20 +1,11 @@
 /**
  * The main place to setup serving files, what requests do what, and determining routing
  */
-const mysql = require("mysql2");
+const db = require("./db.js");
 const express = require("express");
 const bodyParser = require("body-parser");
-const path = require("path");
 const app = express();
-const student = require(path.join(__dirname, "/routes/student.js"));
-
-const con = mysql.createConnection({
-  // Connect to DB using environment variables. Eventually this will be in db.js
-  host: "localhost",
-  user: process.env.USER,
-  password: process.env.PASSWORD,
-  database: process.env.DATABASE,
-});
+const student = require("./routes/student.js");
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -33,10 +24,7 @@ app.get("*", (req, res) => {
 // Start server on given port as well as db connection
 app.listen(PORT, () => {
   console.log(`Listening on http://localhost:${PORT}`);
-  con.connect((err) => {
-    if (err) throw err;
-    console.log(
-      `Connected to database: ${con.config.database} with host: ${con.config.host}`
-    );
+  db.connect(db.MODE_PRODUCTION, () => {
+    console.log(`Connected to database`);
   });
 });

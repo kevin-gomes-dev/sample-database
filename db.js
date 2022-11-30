@@ -85,8 +85,8 @@ exports.fixtures = function (data, done) {
 
 /**
  * Drops all data from all tables given
- * @param {Array} tables
- * @param {Function} done
+ * @param {Array} tables The list of tables we will drop all data from
+ * @param {Function} done The callback when we are finished
  */
 exports.drop = function (tables, done) {
   const pool = state.pool;
@@ -97,3 +97,22 @@ exports.drop = function (tables, done) {
     pool.query(`DELETE FROM ${table}`, callBack);
   }, done);
 };
+
+/**
+ * Returns all data from the given table in an Array (guaranteed unique with Primary Key)
+ * @param {String} table The name of the table we will get data from
+ * @returns {Array} All the items in the table
+ */
+exports.getAll = function(table) {
+  const pool = state.pool;
+  return pool.query(`SELECT FROM ${table}`);
+}
+/**
+ * Adds an item defined by the body into the database on given table.
+ * It's expected you handle validation before calling this
+ * @param {String} table The name of the table we insert into
+ * @param {JSON} body The JSON we wish to add
+ */
+exports.add = function(table, body) {
+  
+}

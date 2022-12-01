@@ -29,8 +29,8 @@ const state = {
 exports.connect = function (mode, done) {
   state.pool = mysql.createPool({
     host: "localhost",
-    user: process.env.USER || 'root',
-    password: process.env.PASSWORD || '',
+    user: process.env.USER || "root",
+    password: process.env.PASSWORD || "",
     database: mode === exports.MODE_PRODUCTION ? PRODUCTION_DB : TEST_DB,
   });
   state.mode = mode;
@@ -99,20 +99,26 @@ exports.drop = function (tables, done) {
 };
 
 /**
- * Returns all data from the given table in an Array (guaranteed unique with Primary Key)
- * @param {String} table The name of the table we will get data from
- * @returns {Array} All the items in the table
- */
-exports.getAll = function(table) {
-  const pool = state.pool;
-  return pool.query(`SELECT FROM ${table}`);
-}
-/**
  * Adds an item defined by the body into the database on given table.
- * It's expected you handle validation before calling this
+ * It's expected you handle validation before calling this, should be used for POST.
+ * It's also expected that the body matches the table structure exactly
  * @param {String} table The name of the table we insert into
  * @param {JSON} body The JSON we wish to add
  */
-exports.add = function(table, body) {
-  
-}
+exports.add = function (table, body) {
+  const pool = state.pool;
+  const cols = Object.keys(body);
+  // For each column, we get the value
+  const values = cols.map((col) => "'" + body[col] + "'");
+  // Log the insert statement we used
+  console.log(
+    `INSERT INTO ${table} (${cols.join(",")}) VALUES (${values.join(",")})`
+  );
+  pool.query(
+    `INSERT INTO ${table} (${cols.join(",")}) VALUES (${values.join(",")})`,
+    (err) => {
+      if (err) throw err;
+      console.log("Success with add");
+    }
+  );
+};

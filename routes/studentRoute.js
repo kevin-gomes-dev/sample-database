@@ -14,6 +14,18 @@ router.get('/', (req, res) => {
   });
 });
 
+// Get student by id
+router.get('/:id', (req, res) => {
+  const pool = db.get();
+  pool.query(
+    `SELECT * FROM students WHERE ID = ${req.params.id}`,
+    (err, result) => {
+      if (err) throw err;
+      res.send(result);
+    }
+  );
+});
+
 // Add a student
 router.post('/', (req, res) => {
   db.add('students', req.body, (result) => res.send(result));

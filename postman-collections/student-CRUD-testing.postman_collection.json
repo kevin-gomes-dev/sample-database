@@ -96,6 +96,35 @@
 			"response": []
 		},
 		{
+			"name": "Update student 1 (no effect)",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"fname\": \"Kevaaaa\",\r\n    \"lname\": \"Devaaaa\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/student/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"student",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "Add student from before",
 			"request": {
 				"method": "POST",
@@ -165,6 +194,35 @@
 					"port": "3000",
 					"path": [
 						"student"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update student 2",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"fname\": \"Kevaaaa\",\r\n    \"lname\": \"Devaaaa\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/student/2",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"student",
+						"2"
 					]
 				}
 			},

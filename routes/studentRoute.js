@@ -10,7 +10,8 @@ router.get('/', (req, res) => {
   const pool = db.get();
   pool.query(`SELECT * FROM students`, (err, result) => {
     if (err) throw err;
-    res.send(result);
+    if (result.length === 0) res.status(204).send();
+    else res.send(result);
   });
 });
 
@@ -21,14 +22,15 @@ router.get('/:id', (req, res) => {
     `SELECT * FROM students WHERE ID = ${req.params.id}`,
     (err, result) => {
       if (err) throw err;
-      res.send(result);
+      if (result.length === 0) res.status(204).send();
+      else res.send(result);
     }
   );
 });
 
 // Add a student
 router.post('/', (req, res) => {
-  db.add('students', req.body, (result) => res.send(result));
+  db.add('students', req.body, (result) => res.status(201).send(result));
 });
 
 // Delete a student by id
@@ -38,16 +40,28 @@ router.delete('/:id', (req, res) => {
     `DELETE FROM students WHERE ID = ${req.params.id}`,
     (err, result) => {
       if (err) throw err;
-      res.send(result);
+      if (result.affectedRows === 0) res.status(404).send();
+      else res.status(204).send();
     }
   );
+});
+
+// Delete all students (no turning back!)
+router.delete('/', (req, res) => {
+  db.deleteAll('students', (result) => {
+    if (result.affectedRows === 0) res.status(404).send();
+    else res.status(204).send();
+  });
 });
 
 // Update a student by id
 router.put('/:id', (req, res) => {
   const data = req.body;
   const condition = `ID = ${req.params.id}`;
-  db.update('students', data, condition, (result) => res.send(result));
+  db.update('students', data, condition, (result) => {
+    if (result.changedRows === 0) res.status(204).send();
+    else res.send(result);
+  });
 });
 
 module.exports = router;

@@ -85,18 +85,17 @@ exports.fixtures = function (data = {}, done) {
 };
 
 /**
- * Deletes all data from all tables given
- * @param {Array} tables The list of tables we will drop all data from
+ * Deletes all data from table given
+ * @param {String} table The table we will delete data from
  * @param {Function} done The callback when we are finished
  */
-exports.delete = function (tables = [], done) {
+exports.deleteAll = function (table, done) {
   const pool = state.pool;
   if (!pool) return done(new Error('No database connection in pool'));
-
-  // For every table, delete everything, and then call the callback
-  tables.forEach((table, callBack) => {
-    pool.query(`DELETE FROM ${table}`, callBack);
-  }, done);
+  pool.query(`DELETE FROM ${table}`, (err, result) => {
+    if (err) throw err;
+    done(result);
+  });
 };
 
 /**

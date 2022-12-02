@@ -1,57 +1,65 @@
+// TODO: Fix CREATE TABLE so that it uses the connection's table. Possibly add to pool or don't use pool?
 /**
- * This file is only used for creating and deleting the database. May be deprecated
- * if there is a better way found to do this
+ * A script to help setup databases and related tables. Run first before anything
  */
-const mysql = require("mysql2");
-// Connect to DB using environment variables.
+const mysql = require('mysql2')
+
+// The database we create. Change to the name of the database
+const database = process.env.DATABASE
+
+// Connect to mysql using environment variables.
 const con = mysql.createConnection({
-  host: "localhost",
+  host: 'localhost',
   user: process.env.USER || 'root',
   password: process.env.PASSWORD || '',
-  database: process.env.DATABASE || 'sample_database',
-});
+  database: null,
+})
 
 /**
- * A test function to create our database
+ * Create database and change connection to use this database.
+ * Calls all other create table functions as well after created since they can
+ * only be done after database is created and being used in connection
  */
 function createDatabase() {
-  con.connect((err) => {
-    if (err) throw err;
-    console.log(`Connected to MySQL with host: ${con.config.host}`);
-    con.query(`CREATE DATABASE ${process.env.DATABASE}`, (err, result) => {
-      if (err) throw err;
-      console.log(`Database created`);
-    });
-  });
+  con.query(`CREATE DATABASE IF NOT EXISTS ${database}`, (err, result) => {
+    if (err) throw err
+    // If we're here, we created db or already had it
+    console.log(`Done creating database (if it didn't already exist)`)
+    con.changeUser({ database: database })
+    createStudents()
+  })
 }
 
 /**
- * A test function to delete our database
- */
-function deleteDatabase() {
-  con.connect((err) => {
-    if (err) throw err;
-    console.log(`Connected to MySQL with host: ${con.config.host}`);
-    con.query(`DROP DATABASE ${process.env.DATABASE}`, (err, result) => {
-      if (err) throw err;
-      console.log("Database deleted (dropped)");
-    });
-  });
-}
-
-/**
- * A test function to create a students table, clearly not going to stay
+ * Creates our students table.
+ *  ID (PRI)
+ *  FName
+ *  LName
+ *  Year
+ *  Gpa
+ *  Credits
+ *  Courses [] (Must have courses table)
+ *  StudentId
  */
 function createStudents() {
-  con.connect((err) => {
-    if (err) throw err;
-    console.log(`Connected to MySQL with host: ${con.config.host}`);
-    con.query(
-      `CREATE TABLE students(ID INT PRIMARY KEY, fname varchar(255))`,
-      (err) => {
-        if (err) throw err;
-        console.log("Done creating table");
-      }
-    );
-  });
+  // Log database from config to ensure it's the one we use
+  console.log(`Database to use: ${con.config.database}`)
+  con.query(
+    `CREATE TABLE IF NOT EXISTS students(
+      Id BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+      Fname VARCHAR(255),
+      Lname VARCHAR(255),
+      Year TINYINT NOT NULL DEFAULT 1,
+      Gpa DECIMAL(3,2) NOT NULL DEFAULT 4.00,
+      Credits SMALLINT NOT NULL DEFAULT 0,
+      StudentId BIGINT NOT NULL DEFAULT -1
+      )`,
+    (err) => {
+      if (err) throw err
+      console.log(`Done creating students table (if it didn't already exist)`)
+      con.end()
+    }
+  )
 }
+
+createDatabase()

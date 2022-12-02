@@ -11,7 +11,7 @@
   "scripts": {
     "start": "node -r dotenv/config app.js",
     "dev": "nodemon -r dotenv/config app.js --watch",
-    "createDb": "node -r dotenv/config database/createDb.js"
+    "init": "node -r dotenv/config database/createDb.js"
   },
   "author": "",
   "license": "ISC",

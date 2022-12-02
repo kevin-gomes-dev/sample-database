@@ -4,46 +4,47 @@
  * Most of this code was gotten and modified from:
  * https://www.terlici.com/2015/08/13/mysql-node-express.html
  */
-const mysql = require("mysql2");
+const mysql = require('mysql2')
 
 // The 2 databases. Test for testing, prod for the actual data
-const PRODUCTION_DB = process.env.database || "sample_database",
-  TEST_DB = "test_sample_database";
+const PRODUCTION_DB = process.env.database || 'sample_database',
+  TEST_DB = 'test_' + process.env.database || 'test_sample_database'
 
 // The two kinds of modes we can be in
-exports.MODE_TEST = "mode_test";
-exports.MODE_PRODUCTION = "mode_production";
+exports.MODE_TEST = 'mode_test'
+exports.MODE_PRODUCTION = 'mode_production'
 
 // The state of our DB
 const state = {
   pool: null,
   mode: null,
-};
+}
 
 /**
  * Makes the state's pool for the database connection. This is so we don't have to create a new
- * connection every time we want to communicate to the database
+ * connection every time we want to communicate to the database.
+ * Default mode is MODE_TEST
  * @param {string} mode Which mode we want to be in, using the enumerable
- * @param {Function} done The callback function once we are done creating the pool
+ * @param {Function} done The callback function once we are done creating the pool, gives state
  */
-exports.connect = function (mode, done) {
+exports.connect = function (mode = MODE_TEST, done) {
   state.pool = mysql.createPool({
-    host: "localhost",
-    user: process.env.USER || "root",
-    password: process.env.PASSWORD || "",
+    host: 'localhost',
+    user: process.env.USER || 'root',
+    password: process.env.PASSWORD || '',
     database: mode === exports.MODE_PRODUCTION ? PRODUCTION_DB : TEST_DB,
-  });
-  state.mode = mode;
-  done();
-};
+  })
+  state.mode = mode
+  done(state)
+}
 
 /**
  * Simply gets our pool
  * @returns {mysql.Pool} The state's pool (the connection)
  */
 exports.get = function () {
-  return state.pool;
-};
+  return state.pool
+}
 
 /**
  * Adds data from the JSON data param. Mainly for testing. Structure is as follows:
@@ -58,45 +59,45 @@ exports.get = function () {
  * @param {JSON} data The JSON data we wish to insert into the database
  * @param {Function} done The function to call when we are all done
  */
-exports.fixtures = function (data, done) {
-  const pool = state.pool;
-  if (!pool) return done(new Error("Missing database connection."));
-  const names = Object.keys(data.tables);
+exports.fixtures = function (data = {}, done) {
+  const pool = state.pool
+  if (!pool) return done(new Error('Missing database connection.'))
+  const names = Object.keys(data.tables)
   names.forEach(function (name, cb) {
     data.tables[name].forEach(function (row, cb) {
       const keys = Object.keys(row),
         values = keys.map(function (key) {
-          return "'" + row[key] + "'";
-        });
+          return "'" + row[key] + "'"
+        })
 
       pool.query(
-        "INSERT INTO " +
+        'INSERT INTO ' +
           name +
-          " (" +
-          keys.join(",") +
-          ") VALUES (" +
-          values.join(",") +
-          ")",
+          ' (' +
+          keys.join(',') +
+          ') VALUES (' +
+          values.join(',') +
+          ')',
         cb
-      );
-    }, cb);
-  }, done);
-};
+      )
+    }, cb)
+  }, done)
+}
 
 /**
- * Drops all data from all tables given
+ * Deletes all data from all tables given
  * @param {Array} tables The list of tables we will drop all data from
  * @param {Function} done The callback when we are finished
  */
-exports.drop = function (tables, done) {
-  const pool = state.pool;
-  if (!pool) return done(new Error("No database connection in pool"));
+exports.delete = function (tables = [], done) {
+  const pool = state.pool
+  if (!pool) return done(new Error('No database connection in pool'))
 
   // For every table, delete everything, and then call the callback
   tables.forEach((table, callBack) => {
-    pool.query(`DELETE FROM ${table}`, callBack);
-  }, done);
-};
+    pool.query(`DELETE FROM ${table}`, callBack)
+  }, done)
+}
 
 /**
  * Adds an item defined by the body into the database on given table.
@@ -105,20 +106,16 @@ exports.drop = function (tables, done) {
  * @param {String} table The name of the table we insert into
  * @param {JSON} body The JSON we wish to add
  */
-exports.add = function (table, body) {
-  const pool = state.pool;
-  const cols = Object.keys(body);
+exports.add = function (table, body, done) {
+  const pool = state.pool
+  const cols = Object.keys(body)
   // For each column, we get the value
-  const values = cols.map((col) => "'" + body[col] + "'");
-  // Log the insert statement we used
-  console.log(
-    `INSERT INTO ${table} (${cols.join(",")}) VALUES (${values.join(",")})`
-  );
+  const values = cols.map((col) => "'" + body[col] + "'")
   pool.query(
-    `INSERT INTO ${table} (${cols.join(",")}) VALUES (${values.join(",")})`,
-    (err) => {
-      if (err) throw err;
-      console.log("Success with add");
+    `INSERT INTO ${table} (${cols.join(',')}) VALUES (${values.join(',')})`,
+    (err, result) => {
+      if (err) throw err
+      done(result)
     }
-  );
-};
+  )
+}

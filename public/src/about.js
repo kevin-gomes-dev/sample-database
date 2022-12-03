@@ -13,7 +13,7 @@ import { setupNav, addParagraph, addTable } from './utils.js';
     ['Requests', 'Endpoints', 'Params', 'Notes'],
     ['GET', 'students', '', 'Gets all students'],
     ['POST', 'students', '', 'Expects request body, id auto increments so no need'],
-    ['PUT', 'students', 'id', ''],
+    ['PUT', 'students', 'id', 'Expects request body'],
     ['DELETE', 'students', 'id', 'Does not decrement auto id'],
   ]);
   addParagraph(`The above table contains a list of requests you can perform while the server is running (which it is if this page is accessible).

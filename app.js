@@ -22,7 +22,7 @@ app.use('/student', student);
 
 // For invalid endpoints
 app.get('*', (req, res) => {
-  res.status(500).send('Error 500: Invalid endpoint for request (check URL)');
+  res.status(400).send('Error 400: Invalid endpoint for request (check URL)');
 });
 
 // Start server on given port as well as db connection

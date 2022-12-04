@@ -105,16 +105,16 @@ exports.deleteAll = function (table, done) {
  * @param {String} table The table we will delete data from
  * @param {String} condition The SQL condition to use to determine what to delete
  * @param {Function} done The callback when we are finished
- * @returns 
+ * @returns
  */
 exports.delete = function (table, condition, done) {
   const pool = state.pool;
   if (!pool) return done(new Error('No database connection in pool'));
-  pool.query(`DELETE FROM ${table} WHERE ${condition}`,(err,result) => {
+  pool.query(`DELETE FROM ${table} WHERE ${condition}`, (err, result) => {
     if (err) throw err;
     done(result);
-  })
-}
+  });
+};
 
 /**
  * Inserts an item defined by the body into the given table.
@@ -135,7 +135,7 @@ exports.insert = function (table, body, done) {
     `INSERT INTO ${table} (${cols.join(',')}) VALUES (${values.join(',')})`,
     (err, result) => {
       if (err) throw err;
-      done(result,body);
+      done(result, body);
     }
   );
 };

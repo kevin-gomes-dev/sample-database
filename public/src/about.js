@@ -11,9 +11,10 @@ import { setupNav, addParagraph, addTable } from './utils.js';
   addParagraph(`Request info:`);
   addTable([
     ['Requests', 'Endpoints', 'Params', 'Notes'],
-    ['GET', 'students', '', ''],
-    ['POST', 'students', '', 'Expects request body, id auto increments'],
-    ['DELETE', 'students', 'id', ''],
+    ['GET', 'students', '', 'Gets all students'],
+    ['POST', 'students', '', 'Expects request body, id auto increments so no need'],
+    ['PUT', 'students', 'id', 'Expects request body'],
+    ['DELETE', 'students', 'id', 'Does not decrement auto id'],
   ]);
   addParagraph(`The above table contains a list of requests you can perform while the server is running (which it is if this page is accessible).
   To start, either use the popular Postman or another way of sending HTTP requests (VS Code has extensions, and you can also use curl, fetch, google for others).

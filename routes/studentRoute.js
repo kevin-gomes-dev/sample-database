@@ -1,36 +1,64 @@
 /**
  * The student router. To be used at endpoint /student
  */
-const express = require('express')
-const router = express.Router()
-const db = require('../database/db.js')
+const express = require('express');
+const router = express.Router();
+const db = require('../database/db.js');
 
 // Get all students
 router.get('/', (req, res) => {
-  const pool = db.get()
+  const pool = db.get();
   pool.query(`SELECT * FROM students`, (err, result) => {
-    if (err) throw err
-    res.send(result)
-  })
-})
+    if (err) throw err;
+    if (result.length === 0) res.status(204).send();
+    else res.send(result);
+  });
+});
+
+// Get student by id
+router.get('/:id', (req, res) => {
+  const pool = db.get();
+  pool.query(
+    `SELECT * FROM students WHERE ID = ${req.params.id}`,
+    (err, result) => {
+      if (err) throw err;
+      if (result.length === 0) res.status(204).send();
+      else res.send(result);
+    }
+  );
+});
 
 // Add a student
 router.post('/', (req, res) => {
-  db.add('students', req.body, (result) => {
-    res.send(result)
-  })
-})
+  db.insert('students', req.body, (_, student) =>
+    res.status(201).send(student)
+  );
+});
 
 // Delete a student by id
 router.delete('/:id', (req, res) => {
-  const pool = db.get()
-  pool.query(
-    `DELETE FROM students WHERE ID = ${req.params.id}`,
-    (err, result) => {
-      if (err) throw err
-      res.send(result)
-    }
-  )
-})
+  db.delete('students', `ID = ${req.params.id}`, (result) => {
+    if (result.affectedRows === 0) res.status(404).send();
+    else res.status(204).send();
+  });
+});
 
-module.exports = router
+// Delete all students (no turning back!)
+router.delete('/', (req, res) => {
+  db.deleteAll('students', (result) => {
+    if (result.affectedRows === 0) res.status(404).send();
+    else res.status(204).send();
+  });
+});
+
+// Update a student by id
+router.put('/:id', (req, res) => {
+  const data = req.body;
+  const condition = `ID = ${req.params.id}`;
+  db.update('students', data, condition, (result) => {
+    if (result.changedRows === 0) res.status(204).send();
+    else res.send(result);
+  });
+});
+
+module.exports = router;

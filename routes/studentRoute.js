@@ -30,20 +30,17 @@ router.get('/:id', (req, res) => {
 
 // Add a student
 router.post('/', (req, res) => {
-  db.add('students', req.body, (result) => res.status(201).send(result));
+  db.insert('students', req.body, (_, student) =>
+    res.status(201).send(student)
+  );
 });
 
 // Delete a student by id
 router.delete('/:id', (req, res) => {
-  const pool = db.get();
-  pool.query(
-    `DELETE FROM students WHERE ID = ${req.params.id}`,
-    (err, result) => {
-      if (err) throw err;
-      if (result.affectedRows === 0) res.status(404).send();
-      else res.status(204).send();
-    }
-  );
+  db.delete('students', `ID = ${req.params.id}`, (result) => {
+    if (result.affectedRows === 0) res.status(404).send();
+    else res.status(204).send();
+  });
 });
 
 // Delete all students (no turning back!)

@@ -85,7 +85,8 @@ exports.fixtures = function (data = {}, done) {
 };
 
 /**
- * Deletes all data from table given
+ * Deletes all data from table given.
+ * Calls callback with result of request
  * @param {String} table The table we will delete data from
  * @param {Function} done The callback when we are finished
  */
@@ -99,30 +100,50 @@ exports.deleteAll = function (table, done) {
 };
 
 /**
- * Adds an item defined by the body into the database on given table.
+ * Deletes specific entry or entries from the table passed, determined by the conditioned passed.
+ * Calls done with result of request.
+ * @param {String} table The table we will delete data from
+ * @param {String} condition The SQL condition to use to determine what to delete
+ * @param {Function} done The callback when we are finished
+ * @returns 
+ */
+exports.delete = function (table, condition, done) {
+  const pool = state.pool;
+  if (!pool) return done(new Error('No database connection in pool'));
+  pool.query(`DELETE FROM ${table} WHERE ${condition}`,(err,result) => {
+    if (err) throw err;
+    done(result);
+  })
+}
+
+/**
+ * Inserts an item defined by the body into the given table.
  * It's expected you handle validation before calling this, should be used for POST.
- * It's also expected that the body matches the table structure exactly
+ * It's also expected that the body matches the table structure exactly.
+ * Calls done with result of request and the request body as params.
  * @param {String} table The name of the table we insert into
  * @param {JSON} body The JSON we wish to add
  * @param {Function} done The callback when we are done
  */
-exports.add = function (table, body, done) {
+exports.insert = function (table, body, done) {
   const pool = state.pool;
   const cols = Object.keys(body);
   // For each column, we get the value
+  // TODO: How to get the resulting created student to return?
   const values = cols.map((col) => "'" + body[col] + "'");
   pool.query(
     `INSERT INTO ${table} (${cols.join(',')}) VALUES (${values.join(',')})`,
     (err, result) => {
       if (err) throw err;
-      done(result);
+      done(result,body);
     }
   );
 };
 
 /**
  * This updates a table in the database with given condition, table, and data.
- * Condition is expected to be an SQL query (ex: WHERE ID = 4)
+ * Condition is expected to be an SQL query (ex: WHERE ID = 4).
+ * Calls done with result of request.
  * @param {String} table The name of the table we are updating
  * @param {JSON} body The JSON containing student info we want to update
  * @param {String} condition The SQL condition to be placed after WHERE

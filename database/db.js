@@ -103,7 +103,6 @@ exports.deleteAll = function (table, done) {
  * Gets all data in a given table. Callback receives the resulting list
  * @param {String} table The name of the table we want to get everything from
  * @param {Function} done The callback when we are finished
- * @returns
  */
 exports.getAll = function (table, done) {
   const pool = state.pool;
@@ -119,7 +118,6 @@ exports.getAll = function (table, done) {
  * @param {String} table The name of the table
  * @param {Number} id The id we want to filter by
  * @param {Function} done The callback when we are finished
- * @returns
  */
 exports.getById = function (table, id, done) {
   const pool = state.pool;

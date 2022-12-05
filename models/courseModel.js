@@ -12,6 +12,7 @@ class Course {
     this.credits = config.credits || 1;
     this.cost = config.cost || 0.0;
     this.description = config.description || '';
+    this.students = config.students || [];
   }
 
   static tableName = 'courses';

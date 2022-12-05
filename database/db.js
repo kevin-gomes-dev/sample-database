@@ -100,12 +100,42 @@ exports.deleteAll = function (table, done) {
 };
 
 /**
+ * Gets all data in a given table. Callback receives the resulting list
+ * @param {String} table The name of the table we want to get everything from
+ * @param {Function} done The callback when we are finished
+ * @returns
+ */
+exports.getAll = function (table, done) {
+  const pool = state.pool;
+  if (!pool) return done(new Error('No database connection in pool'));
+  pool.query(`SELECT * FROM ${table}`, (err, result) => {
+    if (err) throw err;
+    done(result);
+  });
+};
+
+/**
+ * Gets by specific id. Callback receives the result
+ * @param {String} table The name of the table
+ * @param {Number} id The id we want to filter by
+ * @param {Function} done The callback when we are finished
+ * @returns
+ */
+exports.getById = function (table, id, done) {
+  const pool = state.pool;
+  if (!pool) return done(new Error('No database connection in pool'));
+  pool.query(`SELECT * FROM ${table} WHERE ID = ${id}`, (err, result) => {
+    if (err) throw err;
+    done(result);
+  });
+};
+
+/**
  * Deletes specific entry or entries from the table passed, determined by the conditioned passed.
  * Calls done with result of request.
  * @param {String} table The table we will delete data from
  * @param {String} condition The SQL condition to use to determine what to delete
  * @param {Function} done The callback when we are finished
- * @returns
  */
 exports.delete = function (table, condition, done) {
   const pool = state.pool;

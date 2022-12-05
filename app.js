@@ -6,6 +6,7 @@ const db = require('./database/db.js');
 const express = require('express');
 const bodyParser = require('body-parser');
 const student = require('./routes/studentRoute.js');
+const course = require('./routes/courseRoute.js');
 
 const app = express();
 
@@ -17,8 +18,9 @@ const PORT = parseInt(process.env.PORT) || 3000;
 app.use(express.static('public'));
 app.use('/about', express.static('public/about.html'));
 
-// Student route
+// Setup routes
 app.use('/student', student);
+app.use('/courses', course);
 
 // For invalid endpoints
 app.get('*', (req, res) => {

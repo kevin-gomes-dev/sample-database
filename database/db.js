@@ -42,46 +42,8 @@ exports.connect = function (mode = MODE_TEST, done) {
  * Simply gets our pool
  * @returns {mysql.Pool} The state's pool (the connection)
  */
-exports.get = function () {
+exports.getPool = function () {
   return state.pool;
-};
-
-/**
- * Adds data from the JSON data param. Mainly for testing. Structure is as follows:
- * {tables: {
- *    students: [
- * {id: 1, fname: james, ...},
- * {...},
- *  ],
- *    anotherTable: [{...},{...},...],
- *  },
- * }
- * @param {JSON} data The JSON data we wish to insert into the database
- * @param {Function} done The function to call when we are all done
- */
-exports.fixtures = function (data = {}, done) {
-  const pool = state.pool;
-  if (!pool) return done(new Error('Missing database connection.'));
-  const names = Object.keys(data.tables);
-  names.forEach(function (name, cb) {
-    data.tables[name].forEach(function (row, cb) {
-      const keys = Object.keys(row),
-        values = keys.map(function (key) {
-          return "'" + row[key] + "'";
-        });
-
-      pool.query(
-        'INSERT INTO ' +
-          name +
-          ' (' +
-          keys.join(',') +
-          ') VALUES (' +
-          values.join(',') +
-          ')',
-        cb
-      );
-    }, cb);
-  }, done);
 };
 
 /**
@@ -100,12 +62,40 @@ exports.deleteAll = function (table, done) {
 };
 
 /**
+ * Gets all data in a given table. Callback receives the resulting list
+ * @param {String} table The name of the table we want to get everything from
+ * @param {Function} done The callback when we are finished
+ */
+exports.getAll = function (table, done) {
+  const pool = state.pool;
+  if (!pool) return done(new Error('No database connection in pool'));
+  pool.query(`SELECT * FROM ${table}`, (err, result) => {
+    if (err) throw err;
+    done(result);
+  });
+};
+
+/**
+ * Gets by specific id. Callback receives the result
+ * @param {String} table The name of the table
+ * @param {Number} id The id we want to filter by
+ * @param {Function} done The callback when we are finished
+ */
+exports.getById = function (table, id, done) {
+  const pool = state.pool;
+  if (!pool) return done(new Error('No database connection in pool'));
+  pool.query(`SELECT * FROM ${table} WHERE ID = ${id}`, (err, result) => {
+    if (err) throw err;
+    done(result);
+  });
+};
+
+/**
  * Deletes specific entry or entries from the table passed, determined by the conditioned passed.
  * Calls done with result of request.
  * @param {String} table The table we will delete data from
  * @param {String} condition The SQL condition to use to determine what to delete
  * @param {Function} done The callback when we are finished
- * @returns
  */
 exports.delete = function (table, condition, done) {
   const pool = state.pool;

@@ -1,9 +1,9 @@
-// TODO: Fix CREATE TABLE so that it uses the connection's table. Possibly add to pool or don't use pool?
 /**
  * A script to help setup databases and related tables. Run first before anything
  */
 const mysql = require('mysql2');
 const Student = require('../models/studentModel.js');
+const Course = require('../models/courseModel.js');
 
 // The database we create. Change to the name of the database
 const database = process.env.DATABASE;
@@ -48,6 +48,23 @@ function createStudents() {
   con.query(Student.createStatement, (err) => {
     if (err) throw err;
     console.log(`Done creating students table (if it didn't already exist)`);
+    createCourses();
+  });
+}
+
+/**
+ * Creates our courses table
+ * ID (PRI)
+ * Name
+ * CourseId
+ * Credits
+ * Cost
+ * Description
+ */
+function createCourses() {
+  con.query(Course.createStatement, (err) => {
+    if (err) throw err;
+    console.log(`Done creating courses table (if it didn't already exist)`);
     con.end();
   });
 }

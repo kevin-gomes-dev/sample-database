@@ -1,4 +1,4 @@
-/**
+/*
  * The main place to setup serving files, what requests do what, and determining routing
  * API development tries to follow best practices as specified by Microsoft: https://learn.microsoft.com/en-us/azure/architecture/best-practices/api-design
  */

@@ -13,7 +13,9 @@ class Student {
     this.gpa = config.gpa || 4.0;
     this.credits = config.credits || 0;
     this.studentId = config.studentId || -1;
+    this.courses = config.courses || [];
   }
+
   static tableName = 'students';
 
   // The statement to create the students table

@@ -1,5 +1,5 @@
-/**
- * The student router. To be used at endpoint /student
+/*
+ * The student router. To be used at endpoint /students
  */
 const express = require('express');
 const router = express.Router();

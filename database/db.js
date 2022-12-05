@@ -42,46 +42,8 @@ exports.connect = function (mode = MODE_TEST, done) {
  * Simply gets our pool
  * @returns {mysql.Pool} The state's pool (the connection)
  */
-exports.get = function () {
+exports.getPool = function () {
   return state.pool;
-};
-
-/**
- * Adds data from the JSON data param. Mainly for testing. Structure is as follows:
- * {tables: {
- *    students: [
- * {id: 1, fname: james, ...},
- * {...},
- *  ],
- *    anotherTable: [{...},{...},...],
- *  },
- * }
- * @param {JSON} data The JSON data we wish to insert into the database
- * @param {Function} done The function to call when we are all done
- */
-exports.fixtures = function (data = {}, done) {
-  const pool = state.pool;
-  if (!pool) return done(new Error('Missing database connection.'));
-  const names = Object.keys(data.tables);
-  names.forEach(function (name, cb) {
-    data.tables[name].forEach(function (row, cb) {
-      const keys = Object.keys(row),
-        values = keys.map(function (key) {
-          return "'" + row[key] + "'";
-        });
-
-      pool.query(
-        'INSERT INTO ' +
-          name +
-          ' (' +
-          keys.join(',') +
-          ') VALUES (' +
-          values.join(',') +
-          ')',
-        cb
-      );
-    }, cb);
-  }, done);
 };
 
 /**

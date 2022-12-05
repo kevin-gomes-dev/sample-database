@@ -1,15 +1,18 @@
+/**
+ * The student model, containing info about a student
+ */
 class Student {
   /**
    * Creates a student with given config
-   * @param {*} studentProps The object whose properties will be set to the matching instance properties
+   * @param {Student} config The object whose properties will be set to the matching instance properties
    */
-  constructor(studentProps = {}) {
-    this.fName = studentProps.fName || null;
-    this.lName = studentProps.lName || null;
-    this.year = studentProps.year || 1;
-    this.gpa = studentProps.gpa || 4.0;
-    this.credits = studentProps.credits || 0;
-    this.studentId = studentProps.studentId || -1;
+  constructor(config = {}) {
+    this.fName = config.fName || '';
+    this.lName = config.lName || '';
+    this.year = config.year || 1;
+    this.gpa = config.gpa || 4.0;
+    this.credits = config.credits || 0;
+    this.studentId = config.studentId || -1;
   }
   static tableName = 'students';
 

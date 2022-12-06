@@ -11,9 +11,9 @@ const Course = require('../models/courseModel.js');
 //TODO: Use param for id
 //TODO: Add missing requests
 
-// Add course to student (takes student id, course id in request body)
-router.post('/', (req, res) => {
-  const studentId = req.body.studentId || req.body.id,
+// Add course to student (takes student id as param, course id in request body)
+router.post('/:id', (req, res) => {
+  const studentId = req.params.id,
     courseId = '"' + req.body.courseId + '"',
     courseTable = Course.tableName,
     studentTable = Student.tableName;
@@ -26,16 +26,18 @@ router.post('/', (req, res) => {
   ${courseTable}.CourseId = ${courseId} AND ${studentTable}.Id = ${studentId}`,
     (err, result) => {
       if (err) throw err;
-      if (result.affectedRows > 0) res.status(201).send(req.body);
+      if (result.affectedRows > 0)
+        res.status(201).send({ studentId: studentId, courseId: req.body.courseId });
+      else res.status(204).send();
     }
   );
 });
 
-// Add list of courses to student (takes student id, list of courses)
+// Add list of courses to student (takes student id from param, list of courses)
 
-// Delete course from student (takes student id, course id)
+// Delete course from student (takes student id from param, course id)
 
-// Delete list of courses from student (takes student id, list of courses)
+// Delete list of courses from student (takes student id from param, list of courses)
 
 // Delete all courses for all students
 router.delete('/', (_, res) => {
@@ -51,6 +53,22 @@ router.get('/', (_, res) => {
     if (result.length === 0) res.status(204).send();
     else res.send(result);
   });
+});
+
+// Get list of student's courses by student id
+router.get('/:id', (req, res) => {
+  const studentId = req.params.id,
+    linkTable = StudentCoursesLink.tableName,
+    coursesTable = Course.tableName;
+  db.getPool().query(
+    `SELECT * FROM ${coursesTable}, ${linkTable} WHERE 
+  ${linkTable}.studentPriId = ${studentId} AND ${linkTable}.coursePriId = ${coursesTable}.Id`,
+    (err, result) => {
+      if (err) throw err;
+      if (result.length === 0) res.status(204).send();
+      else res.send(result);
+    }
+  );
 });
 
 module.exports = router;

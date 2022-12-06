@@ -144,11 +144,8 @@ exports.update = function (table, body, condition, done) {
   const cols = Object.keys(body);
   // Make the SET col = value, ... pairs here, separated by comma except the last item
   const setPairs = cols.map((col) => `${col} = "${body[col]}"`).join(',');
-  pool.query(
-    `UPDATE ${table} SET ${setPairs} WHERE ${condition}`,
-    (err, result) => {
-      if (err) throw err;
-      done(result);
-    }
-  );
+  pool.query(`UPDATE ${table} SET ${setPairs} WHERE ${condition}`, (err, result) => {
+    if (err) throw err;
+    done(result);
+  });
 };

@@ -13,8 +13,14 @@ class StudentCoursesLink {
   static createStatement = `CREATE TABLE IF NOT EXISTS ${this.tableName} (
   StudentPriId BIGINT,
   CoursePriId BIGINT,
-  FOREIGN KEY (StudentPriId) REFERENCES ${Student.tableName}(Id),
-  FOREIGN KEY (CoursePriId) REFERENCES ${Course.tableName}(Id),
+  CONSTRAINT
+    FOREIGN KEY (StudentPriId) REFERENCES ${Student.tableName}(Id)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
+  CONSTRAINT
+    FOREIGN KEY (CoursePriId) REFERENCES ${Course.tableName}(Id)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
   PRIMARY KEY (StudentPriId,CoursePriId)
   )`;
 }

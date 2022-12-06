@@ -7,7 +7,9 @@ The host is defaulted to localhost. All tests for API will be available via Post
 be imported into Postman and ran in sequence or individually (ensure server is running).
 To run the backend, 3 small steps:
 
-1. A .env file is needed to setup environment variables. These include:
+1. Set up MySQL credentials and have database running on some port (does not matter which). See official details for this at the main site, https://www.mysql.com/. Plenty of guides exist for setting up, but official details are located at https://dev.mysql.com/doc/mysql-getting-started/en/
+
+2. A .env file is needed to setup environment variables. These include:
 
 - USER - The user for your MySQL server (default = root)
 - PASSWORD - The user's password (default = )
@@ -27,8 +29,8 @@ PORT=3000
 # Name of the database
 DATABASE=sample_database
 ```
-2. Run the createDb.js file using "npm run init"
-3. Run the main app using "npm run start"
+3. Run the createDb.js file using "npm run init"
+4. Run the main app using "npm run start"
 
 While running the server, navigating to "http://localhost:YOUR_PORT" will go to the home page. Very much WIP, but gives some info about the project.
 

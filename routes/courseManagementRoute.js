@@ -16,7 +16,7 @@ router.post('/:id', (req, res) => {
     studentTable = Student.tableName;
   // Basically, insert both courseId and the ID column of student into the table
   // Ensure they are = to the passed in body of request with the INSERT INTO SELECT statement
-  // Looks scarier than it is
+  // Looks scarier than it is, can a join improve this?
   db.getPool().query(
     `INSERT INTO ${StudentCoursesLink.tableName} (coursePriId,studentPriId)
      SELECT ${courseTable}.Id, ${studentTable}.Id FROM ${courseTable} AS courses,${studentTable} AS students WHERE

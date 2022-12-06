@@ -15,8 +15,10 @@ router.get('/', (_, res) => {
 });
 
 // Get student by id
-router.get('/:id', (req, res) => {
-  db.getById(Student.tableName, req.params.id, (result) => {
+router.get('/:id', (req, res, next) => {
+  const { id } = req.params;
+  if (!parseInt(id)) return next();
+  db.getById(Student.tableName, id, (result) => {
     if (result.length === 0) res.status(204).send();
     else res.send(result);
   });
@@ -30,7 +32,9 @@ router.post('/', (req, res) => {
 });
 
 // Delete a student by id
-router.delete('/:id', (req, res) => {
+router.delete('/:id', (req, res, next) => {
+  const { id } = req.params;
+  if (!parseInt(id)) return next();
   const condition = `ID = ${req.params.id}`;
   db.delete(Student.tableName, condition, (result) => {
     if (result.affectedRows === 0) res.status(404).send();
@@ -47,7 +51,9 @@ router.delete('/', (_, res) => {
 });
 
 // Update a student by id
-router.put('/:id', (req, res) => {
+router.put('/:id', (req, res, next) => {
+  const { id } = req.params;
+  if (!parseInt(id)) return next();
   const data = req.body,
     condition = `ID = ${req.params.id}`;
   db.update(Student.tableName, data, condition, (result) => {
@@ -55,17 +61,5 @@ router.put('/:id', (req, res) => {
     else res.send(result);
   });
 });
-
-// Add course to student (takes student id, course id)
-router.post('/courseManagement', (req, res) => {
-  const studentId = req.body.studentId,
-    courseId = req.body.courseId;
-});
-
-// Add list of courses to student (takes student id, list of courses)
-
-// Delete course from student (takes student id, course id)
-
-// Delete list of courses from student (takes student id, list of courses)
 
 module.exports = router;

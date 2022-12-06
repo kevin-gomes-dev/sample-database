@@ -8,8 +8,14 @@ const Course = require('./courseModel.js');
  * No constructor since this only serves to link tables together, not contain data
  */
 class StudentCoursesLink {
+  /**
+   * The name of the table
+   */
   static tableName = 'studentCoursesLink';
 
+  /**
+   * The SQL create table statement, defining all keys, data types, and columns
+   */
   static createStatement = `CREATE TABLE IF NOT EXISTS ${this.tableName} (
   StudentPriId BIGINT,
   CoursePriId BIGINT,

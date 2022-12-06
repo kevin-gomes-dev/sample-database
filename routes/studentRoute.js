@@ -48,14 +48,24 @@ router.delete('/', (_, res) => {
 
 // Update a student by id
 router.put('/:id', (req, res) => {
-  const data = req.body;
-  const condition = `ID = ${req.params.id}`;
+  const data = req.body,
+    condition = `ID = ${req.params.id}`;
   db.update(Student.tableName, data, condition, (result) => {
     if (result.changedRows === 0) res.status(204).send();
     else res.send(result);
   });
 });
 
-//TODO: Add courses to student
+// Add course to student (takes student id, course id)
+router.post('/courseManagement', (req, res) => {
+  const studentId = req.body.studentId,
+    courseId = req.body.courseId;
+});
+
+// Add list of courses to student (takes student id, list of courses)
+
+// Delete course from student (takes student id, course id)
+
+// Delete list of courses from student (takes student id, list of courses)
 
 module.exports = router;

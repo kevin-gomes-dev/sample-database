@@ -33,9 +33,7 @@ function createDatabase() {
       }
       // If we're here, we created db or already had it
       con.changeUser({ database: database });
-      console.log(
-        `Done creating database (if it didn't already exist): ${con.config.database}`
-      );
+      console.log(`Done creating database (if it didn't already exist): ${con.config.database}`);
       createStudents();
     });
   });
@@ -86,6 +84,7 @@ function createStudentCoursesLink() {
       }
     });
     console.log(`Committed all tables to database`);
+    con.end();
   });
 }
 

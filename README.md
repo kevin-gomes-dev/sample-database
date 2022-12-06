@@ -5,11 +5,13 @@ This helps so when I start using abstraction to make things quicker, more consis
 
 The host is defaulted to localhost. All tests for API will be available via Postman Collections which can
 be imported into Postman and ran in sequence or individually (ensure server is running).
-To run the backend, 3 small steps:
+To host the backend server, 5 small steps:
 
-1. Set up MySQL credentials and have database running on some port (does not matter which). See official details for this at the main site, https://www.mysql.com/. Plenty of guides exist for setting up, but official details are located at https://dev.mysql.com/doc/mysql-getting-started/en/
+1. Run "npm install" in terminal after changing directory to be wherever you cloned this repo at.
 
-2. A .env file is needed to setup environment variables. These include:
+2. Set up MySQL credentials and have database running on some port (does not matter which). See official details for this at the main site, https://www.mysql.com/. Plenty of guides exist for setting up, but official details are located at https://dev.mysql.com/doc/mysql-getting-started/en/
+
+3. A .env file is needed to setup environment variables. These include:
 
 - USER - The user for your MySQL server (default = root)
 - PASSWORD - The user's password (default = )
@@ -29,8 +31,8 @@ PORT=3000
 # Name of the database
 DATABASE=sample_database
 ```
-3. Run the createDb.js file using "npm run init"
-4. Run the main app using "npm run start"
+4. Run the createDb.js file using "npm run init"
+5. Run the main app using "npm run start"
 
 While running the server, navigating to "http://localhost:YOUR_PORT" will go to the home page. Very much WIP, but gives some info about the project.
 

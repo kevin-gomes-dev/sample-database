@@ -15,9 +15,14 @@ class Course {
     this.students = config.students || [];
   }
 
+  /**
+   * The name of the table
+   */
   static tableName = 'courses';
 
-  // The statement to create the courses table
+  /**
+   * The SQL create table statement, defining all keys, data types, and columns
+   */
   static createStatement = `CREATE TABLE IF NOT EXISTS ${Course.tableName}(
       Id BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
       Name VARCHAR(255),

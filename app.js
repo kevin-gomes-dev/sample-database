@@ -1,12 +1,14 @@
 /*
  * The main place to setup serving files, what requests do what, and determining routing
- * API development tries to follow best practices as specified by Microsoft: https://learn.microsoft.com/en-us/azure/architecture/best-practices/api-design
+ * API development tries to follow best practices as specified by Microsoft:
+ * https://learn.microsoft.com/en-us/azure/architecture/best-practices/api-design
  */
 const db = require('./database/db.js');
 const express = require('express');
 const bodyParser = require('body-parser');
 const student = require('./routes/studentRoute.js');
 const course = require('./routes/courseRoute.js');
+const courseManagement = require('./routes/courseManagementRoute.js');
 
 const app = express();
 
@@ -19,8 +21,9 @@ app.use(express.static('public'));
 app.use('/about', express.static('public/about.html'));
 
 // Setup routes
-app.use('/student', student);
+app.use('/students', student);
 app.use('/courses', course);
+app.use('/students/courseManagement', courseManagement);
 
 // For invalid endpoints
 app.get('*', (req, res) => {

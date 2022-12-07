@@ -11,9 +11,13 @@
   "scripts": {
     "start": "node -r dotenv/config app.js",
     "dev": "nodemon -r dotenv/config app.js --watch",
+    "format": "prettier --write \"./**/*.{js,jsx}\"",
     "init": "node -r dotenv/config database/createDb.js"
   },
   "author": "",
   "license": "ISC",
-  "description": ""
+  "description": "",
+  "devDependencies": {
+    "prettier": "^2.8.0"
+  }
 }

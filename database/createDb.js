@@ -1,9 +1,10 @@
-/**
+/*
  * A script to help setup databases and related tables. Run first before anything
  */
 const mysql = require('mysql2');
 const Student = require('../models/studentModel.js');
 const Course = require('../models/courseModel.js');
+const StudentCoursesLink = require('../models/studentCoursesLinkModel.js');
 
 // The database we create. Change to the name of the database
 const database = process.env.DATABASE;
@@ -22,51 +23,76 @@ const con = mysql.createConnection({
  * only be done after database is created and being used in connection
  */
 function createDatabase() {
-  con.query(`CREATE DATABASE IF NOT EXISTS ${database}`, (err) => {
+  con.beginTransaction((err) => {
     if (err) throw err;
-    // If we're here, we created db or already had it
-    con.changeUser({ database: database });
-    console.log(
-      `Done creating database (if it didn't already exist): ${con.config.database}`
-    );
-    createStudents();
+    con.query(`CREATE DATABASE IF NOT EXISTS ${database}`, (err) => {
+      if (err) {
+        con.rollback(() => {
+          throw err;
+        });
+      }
+      // If we're here, we created db or already had it
+      con.changeUser({ database: database });
+      console.log(`Done creating database (if it didn't already exist): ${con.config.database}`);
+      createStudents();
+    });
   });
 }
 
 /**
- * Creates our students table.
- *  ID (PRI)
- *  FName
- *  LName
- *  Year
- *  Gpa
- *  Credits
- *  Courses [] (Must have courses table)
- *  StudentId
+ * Creates our students table. Check createStatement to see properties
  */
 function createStudents() {
   con.query(Student.createStatement, (err) => {
-    if (err) throw err;
-    console.log(`Done creating students table (if it didn't already exist)`);
+    if (err) {
+      con.rollback(() => {
+        throw err;
+      });
+    }
+    doneCreatingTable('student');
     createCourses();
   });
 }
 
 /**
- * Creates our courses table
- * ID (PRI)
- * Name
- * CourseId
- * Credits
- * Cost
- * Description
+ * Creates our courses table. Check createStatement to see properties
  */
 function createCourses() {
   con.query(Course.createStatement, (err) => {
+    if (err) {
+      con.rollback(() => {
+        throw err;
+      });
+    }
+    doneCreatingTable('courses');
+    createStudentCoursesLink();
+  });
+}
+
+/**
+ * Creates our StudentCoursesLink table. Check createStatement to see properties
+ */
+function createStudentCoursesLink() {
+  con.query(StudentCoursesLink.createStatement, (err) => {
     if (err) throw err;
-    console.log(`Done creating courses table (if it didn't already exist)`);
+    doneCreatingTable('studentCoursesLink');
+    con.commit((err) => {
+      if (err) {
+        con.rollback(() => {
+          throw err;
+        });
+      }
+    });
+    console.log(`Committed all tables to database`);
     con.end();
   });
 }
 
+/**
+ * Helper to log when done creating tables
+ * @param {String} table The name of the table
+ */
+function doneCreatingTable(table) {
+  console.log(`Done creating ${table} table (if it didn't already exist)`);
+}
 createDatabase();

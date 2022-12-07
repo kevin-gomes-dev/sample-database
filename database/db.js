@@ -1,7 +1,7 @@
-/**
+/*
  * This file will be for managing connections to database. This is for running automated tests
  * as well as when we need to modify the db without manually creating a connection everytime.
- * Most of this code was gotten and modified from:
+ * Pooling code was adapted from
  * https://www.terlici.com/2015/08/13/mysql-node-express.html
  */
 const mysql = require('mysql2');
@@ -24,7 +24,7 @@ const state = {
  * Makes the state's pool for the database connection. This is so we don't have to create a new
  * connection every time we want to communicate to the database.
  * Default mode is MODE_TEST
- * @param {string} mode Which mode we want to be in, using the enumerable
+ * @param {String} mode Which mode we want to be in, using the enumerable
  * @param {Function} done The callback function once we are done creating the pool, gives state
  */
 exports.connect = function (mode = MODE_TEST, done) {
@@ -81,7 +81,7 @@ exports.getAll = function (table, done) {
  * @param {Number} id The id we want to filter by
  * @param {Function} done The callback when we are finished
  */
-exports.getById = function (table, id, done) {
+exports.getById = function (table, id = -1, done) {
   const pool = state.pool;
   if (!pool) return done(new Error('No database connection in pool'));
   pool.query(`SELECT * FROM ${table} WHERE ID = ${id}`, (err, result) => {
@@ -97,7 +97,7 @@ exports.getById = function (table, id, done) {
  * @param {String} condition The SQL condition to use to determine what to delete
  * @param {Function} done The callback when we are finished
  */
-exports.delete = function (table, condition, done) {
+exports.delete = function (table, condition = 'ID = -1', done) {
   const pool = state.pool;
   if (!pool) return done(new Error('No database connection in pool'));
   pool.query(`DELETE FROM ${table} WHERE ${condition}`, (err, result) => {
@@ -112,10 +112,10 @@ exports.delete = function (table, condition, done) {
  * It's also expected that the body matches the table structure exactly.
  * Calls done with result of request and the request body as params.
  * @param {String} table The name of the table we insert into
- * @param {JSON} body The JSON we wish to add
+ * @param {*} body The JSON data we wish to add
  * @param {Function} done The callback when we are done
  */
-exports.insert = function (table, body, done) {
+exports.insert = function (table, body = {}, done) {
   const pool = state.pool;
   const cols = Object.keys(body);
   // For each column, we get the value
@@ -135,20 +135,17 @@ exports.insert = function (table, body, done) {
  * Condition is expected to be an SQL query (ex: WHERE ID = 4).
  * Calls done with result of request.
  * @param {String} table The name of the table we are updating
- * @param {JSON} body The JSON containing student info we want to update
+ * @param {*} body The JSON data containing student info we want to update
  * @param {String} condition The SQL condition to be placed after WHERE
  * @param {Function} done The callback when we are done
  */
-exports.update = function (table, body, condition, done) {
+exports.update = function (table, body = {}, condition, done) {
   const pool = state.pool;
   const cols = Object.keys(body);
   // Make the SET col = value, ... pairs here, separated by comma except the last item
   const setPairs = cols.map((col) => `${col} = "${body[col]}"`).join(',');
-  pool.query(
-    `UPDATE ${table} SET ${setPairs} WHERE ${condition}`,
-    (err, result) => {
-      if (err) throw err;
-      done(result);
-    }
-  );
+  pool.query(`UPDATE ${table} SET ${setPairs} WHERE ${condition}`, (err, result) => {
+    if (err) throw err;
+    done(result);
+  });
 };

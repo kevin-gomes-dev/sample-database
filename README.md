@@ -1,15 +1,21 @@
 # Sample Database
-Just a small repo to learn how to set up backend + frontend only using JS and frameworks. I've avoided things like sequelize and mysql-js
+Just a small repo to learn how to set up backend + frontend only using JS and frameworks. Node version used was 16.15.1 LTS. I've avoided things like sequelize and mysql-js
 and other modules so I can make life harder for me (my chosen torture, if you will). That way I can be sure I know the inner workings of this stuff.
 This helps so when I start using abstraction to make things quicker, more consistent and easier, I will have a solid ground knowledge to understand what's going on.
 
 The host is defaulted to localhost. All tests for API will be available via Postman Collections which can
 be imported into Postman and ran in sequence or individually (ensure server is running).
-To run the backend, 3 small steps:
+To host the backend server, 5 small steps:
 
-1. Set up MySQL credentials and have database running on some port (does not matter which). See official details for this at the main site, https://www.mysql.com/. Plenty of guides exist for setting up, but official details are located at https://dev.mysql.com/doc/mysql-getting-started/en/
+1. Run "npm install" in terminal after changing directory to be wherever you cloned this repo at. If you do not know how to clone repositories or do not have Node installed to use npm, please see the following links:
 
-2. A .env file is needed to setup environment variables. These include:
+Cloning repositories: https://docs.github.com/en/repositories/creating-and-managing-repositories/cloning-a-repository
+
+Installing Node (Use LTS version): https://nodejs.org/en/download/
+
+2. Set up MySQL credentials and have database running on some port (does not matter which). See official details for this at the main site, https://www.mysql.com/. Plenty of guides exist for setting up, but official details are located at https://dev.mysql.com/doc/mysql-getting-started/en/
+
+3. A .env file is needed to setup environment variables. These include:
 
 - USER - The user for your MySQL server (default = root)
 - PASSWORD - The user's password (default = )
@@ -29,8 +35,8 @@ PORT=3000
 # Name of the database
 DATABASE=sample_database
 ```
-3. Run the createDb.js file using "npm run init"
-4. Run the main app using "npm run start"
+4. Run the createDb.js file using "npm run init"
+5. Run the main app using "npm run start"
 
 While running the server, navigating to "http://localhost:YOUR_PORT" will go to the home page. Very much WIP, but gives some info about the project.
 

@@ -1,5 +1,5 @@
-/**
- * The student router. To be used at endpoint /student
+/*
+ * The student router. To be used at endpoint /students
  */
 const express = require('express');
 const router = express.Router();
@@ -15,8 +15,10 @@ router.get('/', (_, res) => {
 });
 
 // Get student by id
-router.get('/:id', (req, res) => {
-  db.getById(Student.tableName, req.params.id, (result) => {
+router.get('/:id', (req, res, next) => {
+  const { id } = req.params;
+  if (!parseInt(id)) return next();
+  db.getById(Student.tableName, id, (result) => {
     if (result.length === 0) res.status(204).send();
     else res.send(result);
   });
@@ -30,7 +32,9 @@ router.post('/', (req, res) => {
 });
 
 // Delete a student by id
-router.delete('/:id', (req, res) => {
+router.delete('/:id', (req, res, next) => {
+  const { id } = req.params;
+  if (!parseInt(id)) return next();
   const condition = `ID = ${req.params.id}`;
   db.delete(Student.tableName, condition, (result) => {
     if (result.affectedRows === 0) res.status(404).send();
@@ -47,15 +51,15 @@ router.delete('/', (_, res) => {
 });
 
 // Update a student by id
-router.put('/:id', (req, res) => {
-  const data = req.body;
-  const condition = `ID = ${req.params.id}`;
+router.put('/:id', (req, res, next) => {
+  const { id } = req.params;
+  if (!parseInt(id)) return next();
+  const data = req.body,
+    condition = `ID = ${req.params.id}`;
   db.update(Student.tableName, data, condition, (result) => {
     if (result.changedRows === 0) res.status(204).send();
     else res.send(result);
   });
 });
-
-//TODO: Add courses to student
 
 module.exports = router;

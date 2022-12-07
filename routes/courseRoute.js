@@ -1,3 +1,6 @@
+/*
+ * The student router. To be used at endpoint /courses
+ */
 const express = require('express');
 const router = express.Router();
 const db = require('../database/db.js');

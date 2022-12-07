@@ -1,19 +1,29 @@
+/**
+ * The student model, containing info about a student
+ */
 class Student {
   /**
    * Creates a student with given config
-   * @param {*} studentProps The object whose properties will be set to the matching instance properties
+   * @param {Student} config The object whose properties will be set to the matching instance properties
    */
-  constructor(studentProps = {}) {
-    this.fName = studentProps.fName || null;
-    this.lName = studentProps.lName || null;
-    this.year = studentProps.year || 1;
-    this.gpa = studentProps.gpa || 4.0;
-    this.credits = studentProps.credits || 0;
-    this.studentId = studentProps.studentId || -1;
+  constructor(config = {}) {
+    this.fName = config.fName || '';
+    this.lName = config.lName || '';
+    this.year = config.year || 1;
+    this.gpa = config.gpa || 4.0;
+    this.credits = config.credits || 0;
+    this.studentId = config.studentId || -1;
+    this.courses = config.courses || [];
   }
+
+  /**
+   * The name of the table
+   */
   static tableName = 'students';
 
-  // The statement to create the students table
+  /**
+   * The SQL create table statement, defining all keys, data types, and columns
+   */
   static createStatement = `CREATE TABLE IF NOT EXISTS ${Student.tableName}(
       Id BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
       Fname VARCHAR(255),

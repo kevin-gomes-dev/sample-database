@@ -17,15 +17,17 @@ router.post('/:id', (req, res) => {
   // Basically, insert both courseId and the ID column of student into the table
   // Ensure they are = to the passed in body of request with the INSERT INTO SELECT statement
   // Looks scarier than it is, can a join improve this?
+  console.log(`INSERT INTO ${StudentCoursesLink.tableName} (coursePriId,studentPriId)
+  SELECT courses.Id, students.Id FROM ${courseTable} AS courses,${studentTable} AS students WHERE
+   students.Id = ${studentId} AND courses.courseId = ${courseId}`)
   db.getPool().query(
     `INSERT INTO ${StudentCoursesLink.tableName} (coursePriId,studentPriId)
-     SELECT ${courseTable}.Id, ${studentTable}.Id FROM ${courseTable} AS courses,${studentTable} AS students WHERE
-  courses.CourseId = ${courseId} AND students.Id = ${studentId}`,
+    SELECT courses.Id, students.Id FROM ${courseTable} AS courses,${studentTable} AS students WHERE
+     students.Id = ${studentId} AND courses.courseId = ${courseId}`,
     (err, result) => {
       if (err) throw err;
-      if (result.affectedRows > 0)
-        res.status(201).send({ studentId: studentId, courseId: req.body.courseId });
-      else res.status(204).send();
+      if (result.affectedRows === 0) res.status(204).send(result);
+      else res.status(201).send({ studentId: studentId, courseId: req.body.courseId });
     }
   );
 });
@@ -70,7 +72,7 @@ router.get('/:id', (req, res) => {
     linkTable = StudentCoursesLink.tableName,
     coursesTable = Course.tableName;
   db.getPool().query(
-    `SELECT * FROM ${coursesTable} as courses, ${linkTable} as link WHERE 
+    `SELECT courses.* FROM ${coursesTable} as courses, ${linkTable} as link WHERE 
   link.studentPriId = ${studentId} AND link.coursePriId = courses.Id`,
     (err, result) => {
       if (err) throw err;

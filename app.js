@@ -11,7 +11,7 @@ const course = require('./routes/courseRoute.js');
 const courseManagement = require('./routes/courseManagementRoute.js');
 
 const app = express();
-
+//remove
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 

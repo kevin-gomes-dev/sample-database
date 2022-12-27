@@ -108,7 +108,7 @@ exports.delete = function (table, condition = 'ID = -1', done) {
 
 /**
  * Inserts an item defined by the body into the given table.
- * It's expected you handle validation before calling this, should be used for POST.
+ * It's expected you handle validation of the body before calling this, should be used for POST.
  * It's also expected that the body matches the table structure exactly.
  * Calls done with result of request and the request body as params.
  * @param {String} table The name of the table we insert into

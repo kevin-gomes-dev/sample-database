@@ -62,11 +62,10 @@ router.delete('/', async (_, res) => {
 });
 
 // Get all links between courses and students
-router.get('/', (_, res) => {
-  db.getAll(StudentCoursesLink.tableName, (result) => {
-    if (result.length === 0) res.status(204).send();
-    else res.send(result);
-  });
+router.get('/', async (_, res) => {
+  const result = await db.getAll(StudentCoursesLink.tableName);
+  if (result.length === 0) res.status(204).send();
+  else res.send(result);
 });
 
 // Get list of student's courses by student id

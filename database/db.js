@@ -48,61 +48,67 @@ exports.getPool = function () {
 
 /**
  * Deletes all data from table given.
- * Calls callback with result of request
  * @param {String} table The table we will delete data from
- * @param {Function} done The callback when we are finished
+ * @returns {Promise} The result of the query if no error
  */
-exports.deleteAll = function (table, done) {
-  const pool = state.pool;
-  if (!pool) return done(new Error('No database connection in pool'));
-  pool.query(`DELETE FROM ${table}`, (err, result) => {
-    if (err) throw err;
-    done(result);
+exports.deleteAll = function (table) {
+  return new Promise((resolve, reject) => {
+    const pool = state.pool;
+    if (!pool) reject(new Error('No database connection in pool'));
+    pool.query(`DELETE FROM ${table}`, (err, result) => {
+      if (err) reject(err);
+      resolve(result);
+    });
   });
 };
 
 /**
- * Gets all data in a given table. Callback receives the resulting list
+ * Gets all data in a given table.
  * @param {String} table The name of the table we want to get everything from
- * @param {Function} done The callback when we are finished
+ * @returns {Promise} The result of the query if no error
  */
-exports.getAll = function (table, done) {
-  const pool = state.pool;
-  if (!pool) return done(new Error('No database connection in pool'));
-  pool.query(`SELECT * FROM ${table}`, (err, result) => {
-    if (err) throw err;
-    done(result);
+exports.getAll = function (table) {
+  return new Promise((resolve, reject) => {
+    const pool = state.pool;
+    if (!pool) reject(new Error('No database connection in pool'));
+    pool.query(`SELECT * FROM ${table}`, (err, result) => {
+      if (err) reject(err);
+      resolve(result);
+    });
   });
 };
 
 /**
- * Gets by specific id. Callback receives the result
+ * Gets by specific id.
  * @param {String} table The name of the table
  * @param {Number} id The id we want to filter by
- * @param {Function} done The callback when we are finished
+ * @returns {Promise} The result of the query if no error
  */
-exports.getById = function (table, id = -1, done) {
-  const pool = state.pool;
-  if (!pool) return done(new Error('No database connection in pool'));
-  pool.query(`SELECT * FROM ${table} WHERE ID = ${id}`, (err, result) => {
-    if (err) throw err;
-    done(result);
+exports.getById = function (table, id = -1) {
+  return new Promise((resolve, reject) => {
+    const pool = state.pool;
+    if (!pool) reject(new Error('No database connection in pool'));
+    pool.query(`SELECT * FROM ${table} WHERE ID = ${id}`, (err, result) => {
+      if (err) reject(err);
+      resolve(result);
+    });
   });
 };
 
 /**
  * Deletes specific entry or entries from the table passed, determined by the conditioned passed.
- * Calls done with result of request.
  * @param {String} table The table we will delete data from
  * @param {String} condition The SQL condition to use to determine what to delete
- * @param {Function} done The callback when we are finished
+ * @returns {Promise} The result of the query if no error
  */
-exports.delete = function (table, condition = 'ID = -1', done) {
-  const pool = state.pool;
-  if (!pool) return done(new Error('No database connection in pool'));
-  pool.query(`DELETE FROM ${table} WHERE ${condition}`, (err, result) => {
-    if (err) throw err;
-    done(result);
+exports.delete = function (table, condition = 'ID = -1') {
+  return new Promise((resolve, reject) => {
+    const pool = state.pool;
+    if (!pool) reject(new Error('No database connection in pool'));
+    pool.query(`DELETE FROM ${table} WHERE ${condition}`, (err, result) => {
+      if (err) reject(err);
+      resolve(result);
+    });
   });
 };
 
@@ -110,42 +116,45 @@ exports.delete = function (table, condition = 'ID = -1', done) {
  * Inserts an item defined by the body into the given table.
  * It's expected you handle validation of the body before calling this, should be used for POST.
  * It's also expected that the body matches the table structure exactly.
- * Calls done with result of request and the request body as params.
  * @param {String} table The name of the table we insert into
  * @param {*} body The JSON data we wish to add
- * @param {Function} done The callback when we are done
+ * @returns {Promise} The result of the query if no error
  */
-exports.insert = function (table, body = {}, done) {
-  const pool = state.pool;
-  const cols = Object.keys(body);
-  // For each column, we get the value
-  // TODO: How to get the resulting created student to return?
-  const values = cols.map((col) => "'" + body[col] + "'");
-  pool.query(
-    `INSERT INTO ${table} (${cols.join(',')}) VALUES (${values.join(',')})`,
-    (err, result) => {
-      if (err) throw err;
-      done(result, body);
-    }
-  );
+exports.insert = function (table, body = {}) {
+  return new Promise((resolve, reject) => {
+    const pool = state.pool;
+    if (!pool) reject(new Error('No database connection in pool'));
+    const cols = Object.keys(body);
+    // For each column, we get the value
+    const values = cols.map((col) => "'" + body[col] + "'");
+    pool.query(
+      `INSERT INTO ${table} (${cols.join(',')}) VALUES (${values.join(',')})`,
+      (err, result) => {
+        if (err) reject(err);
+        resolve(result);
+      }
+    );
+  });
 };
 
 /**
  * This updates a table in the database with given condition, table, and data.
  * Condition is expected to be an SQL query (ex: WHERE ID = 4).
- * Calls done with result of request.
  * @param {String} table The name of the table we are updating
  * @param {*} body The JSON data containing student info we want to update
  * @param {String} condition The SQL condition to be placed after WHERE
- * @param {Function} done The callback when we are done
+ * @returns {Promise} The result of the query if no error
  */
-exports.update = function (table, body = {}, condition, done) {
-  const pool = state.pool;
-  const cols = Object.keys(body);
-  // Make the SET col = value, ... pairs here, separated by comma except the last item
-  const setPairs = cols.map((col) => `${col} = "${body[col]}"`).join(',');
-  pool.query(`UPDATE ${table} SET ${setPairs} WHERE ${condition}`, (err, result) => {
-    if (err) throw err;
-    done(result);
+exports.update = function (table, body = {}, condition) {
+  return new Promise((resolve, reject) => {
+    const pool = state.pool;
+    if (!pool) reject(new Error('No database connection in pool'));
+    const cols = Object.keys(body);
+    // Make the SET col = value, ... pairs here, separated by comma except the last item
+    const setPairs = cols.map((col) => `${col} = "${body[col]}"`).join(',');
+    pool.query(`UPDATE ${table} SET ${setPairs} WHERE ${condition}`, (err, result) => {
+      if (err) reject(err);
+      resolve(result);
+    });
   });
 };
